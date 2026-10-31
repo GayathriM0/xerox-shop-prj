@@ -109,7 +109,7 @@ export default function Home() {
               </Link>
 
               {/* Option 2: Xerox Shop Owner Login */}
-              <Link to="/owner/login" className="w-full sm:w-auto">
+              <Link to="/owner-login" className="w-full sm:w-auto">
                 <Button variant="secondary" size="lg" className="w-full sm:w-auto px-7 py-3.5 text-base shadow-md group">
                   <ShieldCheck className="w-5 h-5 mr-2 text-amber-400 group-hover:scale-110 transition-transform" />
                   <span>Xerox Shop Owner Login</span>
@@ -226,7 +226,7 @@ export default function Home() {
               </div>
             </div>
 
-            <Link to="/owner/login" className="block w-full">
+            <Link to="/owner-login" className="block w-full">
               <Button variant="secondary" size="lg" className="w-full justify-center text-sm font-semibold shadow-sm">
                 <span>Go to Shop Owner Login</span>
                 <ArrowRight className="w-4 h-4 ml-1.5" />
@@ -354,7 +354,7 @@ export default function Home() {
                   Student Login
                 </Button>
               </Link>
-              <Link to="/owner/login" className="w-full sm:w-auto">
+              <Link to="/owner-login" className="w-full sm:w-auto">
                 <Button variant="outline" className="w-full bg-white/10 hover:bg-white/20 text-white border-white/20">
                   <ShieldCheck className="w-4 h-4 mr-1.5 text-amber-400" />
                   Owner Login

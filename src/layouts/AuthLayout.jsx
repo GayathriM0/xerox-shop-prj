@@ -21,7 +21,7 @@ export default function AuthLayout() {
       </div>
 
       {/* Main Form Slot */}
-      <div className="w-full max-w-md mx-auto my-8">
+      <div className="w-full max-w-md sm:max-w-lg mx-auto my-8">
         <Outlet />
       </div>
 

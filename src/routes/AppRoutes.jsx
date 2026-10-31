@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
 import AuthLayout from '../layouts/AuthLayout';
 import Home from '../pages/Home';
@@ -19,9 +19,10 @@ export default function AppRoutes() {
       {/* Auth Layout Routes */}
       <Route element={<AuthLayout />}>
         <Route path="/student/login" element={<StudentLogin />} />
-        <Route path="/owner/login" element={<OwnerLogin />} />
+        <Route path="/student-login" element={<StudentLogin />} />
+        <Route path="/owner-login" element={<OwnerLogin />} />
+        <Route path="/owner/login" element={<Navigate to="/owner-login" replace />} />
       </Route>
     </Routes>
   );
 }
-

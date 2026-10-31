@@ -55,7 +55,7 @@ export default function Navbar() {
 
               {/* Owner Login Navbar Button */}
               <Link
-                to="/owner/login"
+                to="/owner-login"
                 className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold rounded-lg text-white bg-slate-900 hover:bg-slate-800 border border-slate-900 transition-colors shadow-sm"
               >
                 <ShieldCheck className="w-4 h-4 text-amber-400" />
@@ -109,7 +109,7 @@ export default function Navbar() {
             </Link>
 
             <Link
-              to="/owner/login"
+              to="/owner-login"
               onClick={() => setMobileMenuOpen(false)}
               className="flex items-center justify-between px-3.5 py-2.5 text-sm font-semibold text-white bg-slate-900 rounded-lg"
             >
