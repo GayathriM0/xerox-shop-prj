@@ -10,7 +10,7 @@ import {
   Info, 
   ArrowRight, 
   ShieldAlert,
-  Sparkles 
+  KeyRound 
 } from 'lucide-react';
 import Card from '../components/common/Card';
 import Button from '../components/ui/Button';
@@ -99,14 +99,14 @@ export default function OwnerLogin() {
   };
 
   return (
-    <Card className="border border-slate-200/90 shadow-lg p-6 sm:p-8">
+    <Card className="border border-slate-200 shadow-xs p-6 sm:p-8 bg-white">
       {/* Header */}
-      <div className="text-center mb-5">
-        <div className="w-12 h-12 bg-slate-900 text-amber-400 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-sm">
+      <div className="text-center mb-6">
+        <div className="w-11 h-11 bg-slate-900 text-amber-400 rounded-lg flex items-center justify-center mx-auto mb-3 shadow-2xs">
           <ShieldCheck className="w-6 h-6" />
         </div>
-        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-800 border border-amber-200/60 mb-2">
-          <ShieldAlert className="w-3.5 h-3.5 text-amber-600" />
+        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-800 border border-slate-200 mb-2">
+          <ShieldAlert className="w-3.5 h-3.5 text-slate-600" />
           <span>Shop Operator &amp; Management Portal</span>
         </div>
         <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Xerox Shop Owner Login</h1>
@@ -116,23 +116,29 @@ export default function OwnerLogin() {
       </div>
 
       {/* Demo Owner Credentials Box */}
-      <div className="mb-5 p-3.5 rounded-xl bg-amber-50 border border-amber-200/80 text-xs text-amber-950 shadow-2xs">
-        <div className="flex items-center justify-between gap-2 mb-1.5">
-          <span className="font-bold flex items-center gap-1.5 text-amber-900">
-            <Sparkles className="w-4 h-4 text-amber-600" />
-            Frontend Demo Owner Account
+      <div className="mb-5 p-3 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-700">
+        <div className="flex items-center justify-between gap-2 mb-2">
+          <span className="font-semibold flex items-center gap-1.5 text-slate-800">
+            <KeyRound className="w-3.5 h-3.5 text-slate-600" />
+            Demo Owner Account
           </span>
           <button
             type="button"
             onClick={fillDemoOwner}
-            className="text-[11px] font-bold text-amber-900 bg-white hover:bg-amber-100 border border-amber-300 px-2 py-0.5 rounded shadow-2xs transition-colors shrink-0"
+            className="text-[11px] font-semibold text-slate-800 bg-white hover:bg-slate-100 border border-slate-200 px-2 py-0.5 rounded transition-colors shrink-0"
           >
             Auto-Fill
           </button>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-[11px] text-amber-900">
-          <div><span className="text-amber-700 font-medium">Email:</span> {DEMO_OWNER.email}</div>
-          <div><span className="text-amber-700 font-medium">Password:</span> {DEMO_OWNER.password}</div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[11px] text-slate-600">
+          <div>
+            <span className="text-slate-500 font-medium">Email: </span>
+            <code className="text-slate-800 font-mono bg-white px-1 py-0.5 rounded border border-slate-200">{DEMO_OWNER.email}</code>
+          </div>
+          <div>
+            <span className="text-slate-500 font-medium">Password: </span>
+            <code className="text-slate-800 font-mono bg-white px-1 py-0.5 rounded border border-slate-200">{DEMO_OWNER.password}</code>
+          </div>
         </div>
       </div>
 
@@ -159,12 +165,12 @@ export default function OwnerLogin() {
       <form onSubmit={handleSubmit} className="space-y-4" noValidate>
         {/* Email Field */}
         <div>
-          <label htmlFor="owner-email" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+          <label htmlFor="owner-email" className="block text-xs font-semibold text-slate-700 uppercase tracking-wide mb-1.5">
             Owner Email ID <span className="text-rose-500">*</span>
           </label>
           <div className="relative rounded-lg shadow-2xs">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
-              <Mail className="h-5 w-5" />
+              <Mail className="h-4 w-4" />
             </div>
             <input
               id="owner-email"
@@ -175,10 +181,10 @@ export default function OwnerLogin() {
                 setFormData({ ...formData, email: e.target.value });
                 if (errors.email) setErrors({ ...errors, email: '' });
               }}
-              className={`block w-full rounded-lg border py-2.5 pl-10 pr-3.5 text-sm transition-colors focus:outline-none focus:ring-2 ${
+              className={`block w-full rounded-lg border py-2 pl-10 pr-3.5 text-sm transition-all focus:outline-none focus:ring-2 ${
                 errors.email
-                  ? 'border-rose-300 text-rose-900 placeholder-rose-300 focus:border-rose-500 focus:ring-rose-500/20'
-                  : 'border-slate-300 text-slate-900 placeholder-slate-400 focus:border-slate-800 focus:ring-slate-800/20'
+                  ? 'border-rose-300 bg-rose-50/20 text-slate-900 placeholder-slate-400 focus:border-rose-500 focus:ring-rose-500/20'
+                  : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400 hover:border-slate-400 focus:border-slate-800 focus:ring-slate-800/20'
               }`}
             />
           </div>
@@ -193,14 +199,14 @@ export default function OwnerLogin() {
         {/* Password Field */}
         <div>
           <div className="flex items-center justify-between mb-1.5">
-            <label htmlFor="owner-password" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
+            <label htmlFor="owner-password" className="block text-xs font-semibold text-slate-700 uppercase tracking-wide">
               Password <span className="text-rose-500">*</span>
             </label>
             <span className="text-[11px] text-slate-400">Default: Owner@123</span>
           </div>
           <div className="relative rounded-lg shadow-2xs">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
-              <Lock className="h-5 w-5" />
+              <Lock className="h-4 w-4" />
             </div>
             <input
               id="owner-password"
@@ -211,10 +217,10 @@ export default function OwnerLogin() {
                 setFormData({ ...formData, password: e.target.value });
                 if (errors.password) setErrors({ ...errors, password: '' });
               }}
-              className={`block w-full rounded-lg border py-2.5 pl-10 pr-10 text-sm transition-colors focus:outline-none focus:ring-2 ${
+              className={`block w-full rounded-lg border py-2 pl-10 pr-10 text-sm transition-all focus:outline-none focus:ring-2 ${
                 errors.password
-                  ? 'border-rose-300 text-rose-900 placeholder-rose-300 focus:border-rose-500 focus:ring-rose-500/20'
-                  : 'border-slate-300 text-slate-900 placeholder-slate-400 focus:border-slate-800 focus:ring-slate-800/20'
+                  ? 'border-rose-300 bg-rose-50/20 text-slate-900 placeholder-slate-400 focus:border-rose-500 focus:ring-rose-500/20'
+                  : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400 hover:border-slate-400 focus:border-slate-800 focus:ring-slate-800/20'
               }`}
             />
             <button
@@ -241,14 +247,14 @@ export default function OwnerLogin() {
               type="checkbox"
               checked={formData.stationActive}
               onChange={(e) => setFormData({ ...formData, stationActive: e.target.checked })}
-              className="w-4 h-4 rounded border-slate-300 text-slate-800 focus:ring-slate-700"
+              className="w-4 h-4 rounded border-slate-300 text-slate-900 focus:ring-slate-800"
             />
             <span>Keep workstation session open</span>
           </label>
         </div>
 
         {/* Submit Button */}
-        <Button variant="secondary" type="submit" size="lg" className="w-full justify-center shadow-md mt-2">
+        <Button variant="secondary" type="submit" size="lg" className="w-full justify-center shadow-xs mt-3">
           <span>Sign In as Shop Owner</span>
           <ArrowRight className="w-4 h-4 ml-1.5" />
         </Button>
