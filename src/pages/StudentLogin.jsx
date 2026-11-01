@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   GraduationCap, 
   Lock, 
@@ -12,12 +13,29 @@ import {
   Info, 
   ArrowRight, 
   UserPlus, 
-  LogIn 
+  LogIn,
+  CheckCircle2,
+  Sparkles
 } from 'lucide-react';
 import Card from '../components/common/Card';
 import Button from '../components/ui/Button';
+import { useAuth, DEMO_STUDENT } from '../context/AuthContext';
 
 export default function StudentLogin() {
+  const { currentUser, studentLogin, studentRegister } = useAuth();
+  const navigate = useNavigate();
+
+  // If already logged in, redirect to respective dashboard
+  useEffect(() => {
+    if (currentUser) {
+      if (currentUser.role === 'student') {
+        navigate('/student/dashboard', { replace: true });
+      } else if (currentUser.role === 'owner') {
+        navigate('/owner/dashboard', { replace: true });
+      }
+    }
+  }, [currentUser, navigate]);
+
   // 'login' = ALREADY REGISTERED | 'register' = NEW USER
   const [activeTab, setActiveTab] = useState('login');
 
@@ -78,6 +96,17 @@ export default function StudentLogin() {
     setRegErrors({});
   };
 
+  // Quick fill helper for demo student credentials
+  const fillDemoStudent = () => {
+    setActiveTab('login');
+    setLoginData({
+      email: DEMO_STUDENT.email,
+      password: DEMO_STUDENT.password,
+    });
+    setLoginErrors({});
+    setLoginFeedback(null);
+  };
+
   // Handle Login Submission
   const handleLoginSubmit = (e) => {
     e.preventDefault();
@@ -108,11 +137,18 @@ export default function StudentLogin() {
       return;
     }
 
-    // Validation passed - backend not connected yet
-    setLoginFeedback({
-      type: 'info',
-      message: 'Login credentials format validated. Backend authentication service will be connected in the next phase.',
-    });
+    // Attempt student login via AuthContext
+    const result = studentLogin(loginData.email, loginData.password);
+    if (!result.success) {
+      setLoginFeedback({
+        type: 'error',
+        message: result.error,
+      });
+      return;
+    }
+
+    // Success -> navigate to student dashboard
+    navigate('/student/dashboard');
   };
 
   // Handle Registration Submission
@@ -164,17 +200,39 @@ export default function StudentLogin() {
       return;
     }
 
-    // Validation passed - backend not connected yet
-    setRegFeedback({
-      type: 'info',
-      message: 'Student registration form validated successfully. Database user creation will be connected in the next phase.',
+    // Register student into localStorage
+    const result = studentRegister(regData);
+    if (!result.success) {
+      setRegFeedback({
+        type: 'error',
+        message: result.error,
+      });
+      return;
+    }
+
+    // Switch to login tab with pre-filled registered email so student can log in
+    setLoginData({
+      email: regData.email.trim(),
+      password: '',
+    });
+    setRegData({
+      fullName: '',
+      email: '',
+      department: '',
+      mobile: '',
+      password: '',
+    });
+    setActiveTab('login');
+    setLoginFeedback({
+      type: 'success',
+      message: `Account created successfully! Please enter your password to log in.`,
     });
   };
 
   return (
     <Card className="border border-slate-200/90 shadow-lg p-5 sm:p-8">
       {/* Header Banner */}
-      <div className="text-center mb-6">
+      <div className="text-center mb-5">
         <div className="w-12 h-12 bg-sky-100 text-sky-600 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-inner">
           <GraduationCap className="w-6 h-6" />
         </div>
@@ -182,6 +240,27 @@ export default function StudentLogin() {
         <p className="text-xs sm:text-sm text-slate-500 mt-1">
           College Xerox &amp; Reprographics Management
         </p>
+      </div>
+
+      {/* Demo Credentials Helper Box */}
+      <div className="mb-5 p-3.5 rounded-xl bg-sky-50 border border-sky-200/80 text-xs text-sky-950 shadow-2xs">
+        <div className="flex items-center justify-between gap-2 mb-1.5">
+          <span className="font-bold flex items-center gap-1.5 text-sky-900">
+            <Sparkles className="w-4 h-4 text-sky-600" />
+            Frontend Demo Student Account
+          </span>
+          <button
+            type="button"
+            onClick={fillDemoStudent}
+            className="text-[11px] font-bold text-sky-700 bg-white hover:bg-sky-100 border border-sky-300 px-2 py-0.5 rounded shadow-2xs transition-colors shrink-0"
+          >
+            Auto-Fill
+          </button>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-[11px] text-sky-800">
+          <div><span className="text-sky-600 font-medium">Email:</span> {DEMO_STUDENT.email}</div>
+          <div><span className="text-sky-600 font-medium">Password:</span> {DEMO_STUDENT.password}</div>
+        </div>
       </div>
 
       {/* Segmented Control / Tabs Toggle */}
@@ -232,11 +311,15 @@ export default function StudentLogin() {
               className={`mb-4 p-3 rounded-lg text-xs flex items-start gap-2.5 ${
                 loginFeedback.type === 'error'
                   ? 'bg-rose-50 border border-rose-200 text-rose-700'
+                  : loginFeedback.type === 'success'
+                  ? 'bg-emerald-50 border border-emerald-200 text-emerald-800'
                   : 'bg-sky-50 border border-sky-200 text-sky-800'
               }`}
             >
               {loginFeedback.type === 'error' ? (
                 <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-600" />
+              ) : loginFeedback.type === 'success' ? (
+                <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-emerald-600" />
               ) : (
                 <Info className="w-4 h-4 shrink-0 mt-0.5 text-sky-600" />
               )}
@@ -257,7 +340,7 @@ export default function StudentLogin() {
                 <input
                   id="login-email"
                   type="email"
-                  placeholder="student@college.edu"
+                  placeholder="e.g. student@college.com"
                   value={loginData.email}
                   onChange={(e) => {
                     setLoginData({ ...loginData, email: e.target.value });
@@ -284,7 +367,7 @@ export default function StudentLogin() {
                 <label htmlFor="login-password" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
                   Password <span className="text-rose-500">*</span>
                 </label>
-                <span className="text-[11px] text-slate-400">Min. 6 characters</span>
+                <span className="text-[11px] text-slate-400">Default: Student@123</span>
               </div>
               <div className="relative rounded-lg shadow-2xs">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
@@ -383,7 +466,7 @@ export default function StudentLogin() {
                 <input
                   id="reg-name"
                   type="text"
-                  placeholder="e.g. John Doe"
+                  placeholder="e.g. Rahul Sharma"
                   value={regData.fullName}
                   onChange={(e) => {
                     setRegData({ ...regData, fullName: e.target.value });
@@ -416,7 +499,7 @@ export default function StudentLogin() {
                 <input
                   id="reg-email"
                   type="email"
-                  placeholder="e.g. student@college.edu"
+                  placeholder="e.g. rahul@college.com"
                   value={regData.email}
                   onChange={(e) => {
                     setRegData({ ...regData, email: e.target.value });

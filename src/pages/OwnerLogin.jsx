@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   ShieldCheck, 
   Lock, 
@@ -8,12 +9,28 @@ import {
   AlertCircle, 
   Info, 
   ArrowRight, 
-  ShieldAlert 
+  ShieldAlert,
+  Sparkles 
 } from 'lucide-react';
 import Card from '../components/common/Card';
 import Button from '../components/ui/Button';
+import { useAuth, DEMO_OWNER } from '../context/AuthContext';
 
 export default function OwnerLogin() {
+  const { currentUser, ownerLogin } = useAuth();
+  const navigate = useNavigate();
+
+  // If already logged in, redirect to respective dashboard
+  useEffect(() => {
+    if (currentUser) {
+      if (currentUser.role === 'owner') {
+        navigate('/owner/dashboard', { replace: true });
+      } else if (currentUser.role === 'student') {
+        navigate('/student/dashboard', { replace: true });
+      }
+    }
+  }, [currentUser, navigate]);
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -28,6 +45,16 @@ export default function OwnerLogin() {
     return emailRegex.test(email.trim());
   };
 
+  const fillDemoOwner = () => {
+    setFormData({
+      email: DEMO_OWNER.email,
+      password: DEMO_OWNER.password,
+      stationActive: true,
+    });
+    setErrors({});
+    setFeedback(null);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setFeedback(null);
@@ -37,7 +64,7 @@ export default function OwnerLogin() {
     if (!formData.email.trim()) {
       formErrors.email = 'Owner Email ID is required.';
     } else if (!isValidEmail(formData.email)) {
-      formErrors.email = 'Please enter a valid email address (e.g. owner@campusprint.edu).';
+      formErrors.email = 'Please enter a valid email address (e.g. owner@xerox.com).';
     }
 
     // Validate Password
@@ -57,17 +84,24 @@ export default function OwnerLogin() {
       return;
     }
 
-    // In accordance with project instructions, backend authentication is not implemented yet
-    setFeedback({
-      type: 'info',
-      message: 'Owner login credentials format validated. Backend authentication service will be connected in the upcoming phase.',
-    });
+    // Attempt Owner Login via AuthContext
+    const result = ownerLogin(formData.email, formData.password);
+    if (!result.success) {
+      setFeedback({
+        type: 'error',
+        message: result.error,
+      });
+      return;
+    }
+
+    // Success -> Navigate to Owner Dashboard
+    navigate('/owner/dashboard');
   };
 
   return (
     <Card className="border border-slate-200/90 shadow-lg p-6 sm:p-8">
       {/* Header */}
-      <div className="text-center mb-6">
+      <div className="text-center mb-5">
         <div className="w-12 h-12 bg-slate-900 text-amber-400 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-sm">
           <ShieldCheck className="w-6 h-6" />
         </div>
@@ -79,6 +113,27 @@ export default function OwnerLogin() {
         <p className="text-xs sm:text-sm text-slate-500 mt-1">
           Authorized access to manage campus print queues, jobs, and machines
         </p>
+      </div>
+
+      {/* Demo Owner Credentials Box */}
+      <div className="mb-5 p-3.5 rounded-xl bg-amber-50 border border-amber-200/80 text-xs text-amber-950 shadow-2xs">
+        <div className="flex items-center justify-between gap-2 mb-1.5">
+          <span className="font-bold flex items-center gap-1.5 text-amber-900">
+            <Sparkles className="w-4 h-4 text-amber-600" />
+            Frontend Demo Owner Account
+          </span>
+          <button
+            type="button"
+            onClick={fillDemoOwner}
+            className="text-[11px] font-bold text-amber-900 bg-white hover:bg-amber-100 border border-amber-300 px-2 py-0.5 rounded shadow-2xs transition-colors shrink-0"
+          >
+            Auto-Fill
+          </button>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-[11px] text-amber-900">
+          <div><span className="text-amber-700 font-medium">Email:</span> {DEMO_OWNER.email}</div>
+          <div><span className="text-amber-700 font-medium">Password:</span> {DEMO_OWNER.password}</div>
+        </div>
       </div>
 
       {/* Info / Error Feedback Notice */}
@@ -114,7 +169,7 @@ export default function OwnerLogin() {
             <input
               id="owner-email"
               type="email"
-              placeholder="e.g. owner@campusprint.edu"
+              placeholder="e.g. owner@xerox.com"
               value={formData.email}
               onChange={(e) => {
                 setFormData({ ...formData, email: e.target.value });
@@ -141,7 +196,7 @@ export default function OwnerLogin() {
             <label htmlFor="owner-password" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
               Password <span className="text-rose-500">*</span>
             </label>
-            <span className="text-[11px] text-slate-400">Min. 6 characters</span>
+            <span className="text-[11px] text-slate-400">Default: Owner@123</span>
           </div>
           <div className="relative rounded-lg shadow-2xs">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
